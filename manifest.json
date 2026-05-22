@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "Web Tools",
+  "version": "1.1",
+  "description": "Weboldal elemző, színpaletta, képkinyerő, megbízhatóság ellenőrző és méretező eszköz.",
+  "permissions": [
+    "tabs",
+    "storage",
+    "scripting",
+    "activeTab",
+    "downloads",
+    "debugger"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Web Tools"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}

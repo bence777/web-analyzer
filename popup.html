@@ -1,0 +1,515 @@
+<!doctype html>
+<html lang="hu">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Web Tools</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+
+<body>
+  <main class="app">
+    <section id="menuView" class="view">
+      <header class="hero menu-hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Tool selector</p>
+          <h1>Web Tools</h1>
+          <p class="subtitle">
+            Válassz egy eszközt az elemzéshez, palettához, képek kinyeréséhez,
+            megbízhatóság ellenőrzéshez vagy méretezéshez.
+          </p>
+        </div>
+      </header>
+
+      <section class="tool-grid">
+        <button id="openAnalyzerBtn" class="tool-card" type="button">
+          <span class="tool-icon">WA</span>
+          <span class="tool-content">
+            <strong>Web Analyzer</strong>
+            <small>SEO, UX, technikai állapot és audit riport.</small>
+          </span>
+          <span class="tool-arrow">→</span>
+        </button>
+
+        <button id="openPaletteBtn" class="tool-card" type="button">
+          <span class="tool-icon palette-icon">CP</span>
+          <span class="tool-content">
+            <strong>Color Palette</strong>
+            <small>Színek kinyerése és alkalmazása weboldalakon.</small>
+          </span>
+          <span class="tool-arrow">→</span>
+        </button>
+
+        <button id="openImageBtn" class="tool-card" type="button">
+          <span class="tool-icon">IE</span>
+          <span class="tool-content">
+            <strong>Image Extractor</strong>
+            <small>Képek kinyerése, linkelése és letöltése weboldalakról.</small>
+          </span>
+          <span class="tool-arrow">→</span>
+        </button>
+
+        <button id="openTrustBtn" class="tool-card" type="button">
+          <span class="tool-icon">TC</span>
+          <span class="tool-content">
+            <strong>Trust Checker</strong>
+            <small>Weboldal megbízhatósági jelek és kockázati riport.</small>
+          </span>
+          <span class="tool-arrow">→</span>
+        </button>
+
+        <button id="openSizerBtn" class="tool-card" type="button">
+          <span class="tool-icon">SZ</span>
+          <span class="tool-content">
+            <strong>Size Tool</strong>
+            <small>Szövegek, címek, képek, kártyák és szekciók méretezése.</small>
+          </span>
+          <span class="tool-arrow">→</span>
+        </button>
+      </section>
+    </section>
+
+    <section id="analyzerView" class="view hidden">
+      <button class="back-btn" data-back-menu type="button">← Vissza</button>
+
+      <header class="hero">
+        <div class="hero-copy">
+          <h1>Web Audit</h1>
+          <p class="subtitle">
+            SEO, UX, tartalom, linkek, képek, technikai állapot és akadálymentesítés.
+          </p>
+        </div>
+
+        <button id="analyzeBtn" class="primary-btn" type="button">
+          Elemzés
+        </button>
+      </header>
+
+      <section id="scoreCard" class="score-card hidden">
+        <div class="score-ring" id="scoreRing">
+          <span id="score">0</span>
+          <small>/100</small>
+        </div>
+
+        <div class="score-info">
+          <div class="quality-row">
+            <span id="qualityBadge" class="quality-badge">Nincs adat</span>
+            <span id="issueCount" class="issue-count">0 javítás</span>
+          </div>
+
+          <h2 id="pageTitle">Oldal címe</h2>
+          <p id="pageUrl"></p>
+        </div>
+      </section>
+
+      <section id="insights" class="insights hidden"></section>
+      <section id="metrics" class="metric-grid hidden"></section>
+
+      <section id="topFixes" class="top-fixes hidden">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Prioritás</p>
+            <h2>Top javítási javaslatok</h2>
+          </div>
+        </div>
+
+        <div id="topFixesList"></div>
+      </section>
+
+      <nav id="categoryTabs" class="tabs hidden"></nav>
+
+      <section id="categoryPanel" class="category-panel hidden">
+        <div class="category-header">
+          <p id="categoryLabel" class="eyebrow">SEO</p>
+
+          <div class="category-title-row">
+            <h2 id="categoryTitle">SEO elemzés</h2>
+            <span id="categoryScore" class="mini-score">0/100</span>
+          </div>
+
+          <p id="categorySummary" class="category-summary"></p>
+        </div>
+
+        <div id="categoryContent" class="check-list"></div>
+      </section>
+
+      <section id="actions" class="actions hidden">
+        <button id="copyBtn" class="secondary-btn" type="button">
+          Riport másolása
+        </button>
+      </section>
+    </section>
+
+    <section id="paletteView" class="view hidden">
+      <button class="back-btn" data-back-menu type="button">← Vissza</button>
+
+      <header class="hero palette-hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Color tool</p>
+          <h1>Color Palette</h1>
+          <p class="subtitle">
+            Színek kinyerése az aktuális oldalról, másolás és gyors alkalmazás.
+          </p>
+        </div>
+
+        <button id="extractPaletteBtn" class="primary-btn" type="button">
+          Paletta kinyerése
+        </button>
+      </header>
+
+      <section id="paletteStatus" class="status idle" role="status">
+        Nyiss meg egy weboldalt, majd nyerd ki a palettát.
+      </section>
+
+      <section class="palette-main-card">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Palette</p>
+            <h2>Színpaletta</h2>
+          </div>
+
+          <button id="resetPaletteBtn" class="secondary-btn small-btn" type="button">
+            Reset
+          </button>
+        </div>
+
+        <div id="paletteColors" class="palette-grid">
+          <div class="empty-state">
+            Még nincs kinyert paletta.
+          </div>
+        </div>
+      </section>
+
+      <section class="selected-color-card">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Selected</p>
+            <h2>Kiválasztott szín</h2>
+          </div>
+
+          <span id="selectedColorPreview" class="selected-color-preview"></span>
+        </div>
+
+        <p id="activePaletteColor" class="active-color-text">
+          Nincs aktív szín
+        </p>
+
+        <p class="hint-text">
+          Kattints egy színre a másoláshoz és az alkalmazás mód aktiválásához.
+        </p>
+      </section>
+    </section>
+
+    <section id="imageView" class="view hidden">
+      <button class="back-btn" data-back-menu type="button">← Vissza</button>
+
+      <header class="hero image-hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Image tool</p>
+          <h1>Image Extractor</h1>
+          <p class="subtitle">
+            Képek kinyerése az aktuális weboldalról, link másolás, megnyitás és letöltés.
+          </p>
+        </div>
+
+        <button id="extractImagesBtn" class="primary-btn" type="button">
+          Képek kinyerése
+        </button>
+      </header>
+
+      <section id="imageStatus" class="status idle" role="status">
+        Nyiss meg egy weboldalt, majd nyerd ki a képeket.
+      </section>
+
+      <section class="image-main-card">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Images</p>
+            <h2>Kinyert képek</h2>
+          </div>
+
+          <button id="resetImagesBtn" class="secondary-btn small-btn" type="button">
+            Reset
+          </button>
+        </div>
+
+        <div id="imageList" class="image-grid">
+          <div class="empty-state">
+            Még nincs kinyert kép.
+          </div>
+        </div>
+      </section>
+
+      <section class="selected-color-card">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Tip</p>
+            <h2>Használat</h2>
+          </div>
+        </div>
+
+        <p class="hint-text">
+          A képeknél tudsz linket másolni, külön lapon megnyitni vagy letöltést indítani.
+        </p>
+      </section>
+    </section>
+
+    <section id="trustView" class="view hidden">
+      <button class="back-btn" data-back-menu type="button">← Vissza</button>
+
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Trust tool</p>
+          <h1>Trust Checker</h1>
+          <p class="subtitle">
+            Megbízhatósági jelek, gyanús minták, technikai kockázatok és gyors riport.
+          </p>
+        </div>
+
+        <button id="trustAnalyzeBtn" class="primary-btn" type="button">
+          Elemzés
+        </button>
+      </header>
+
+      <section id="trustStatus" class="status idle" role="status">
+        Nyiss meg egy weboldalt, majd indítsd el a megbízhatósági elemzést.
+      </section>
+
+      <section id="trustScoreCard" class="score-card hidden">
+        <div class="score-ring" id="trustScoreRing">
+          <span id="trustScore">0</span>
+          <small>/100</small>
+        </div>
+
+        <div class="score-info">
+          <div class="quality-row">
+            <span id="trustQualityBadge" class="quality-badge">Nincs adat</span>
+            <span id="trustIssueCount" class="issue-count">0 figyelmeztetés</span>
+          </div>
+
+          <h2 id="trustPageTitle">Oldal címe</h2>
+          <p id="trustPageUrl"></p>
+        </div>
+      </section>
+
+      <section id="trustMetrics" class="metric-grid hidden"></section>
+
+      <section id="trustTopFixes" class="top-fixes hidden">
+        <div class="section-head">
+          <div>
+            <p class="eyebrow">Prioritás</p>
+            <h2>Top figyelmeztetések</h2>
+          </div>
+        </div>
+
+        <div id="trustTopFixesList"></div>
+      </section>
+
+      <section id="trustChecks" class="check-list hidden"></section>
+
+      <section id="trustActions" class="actions hidden">
+        <button id="trustCopyBtn" class="secondary-btn" type="button">
+          Riport másolása
+        </button>
+      </section>
+    </section>
+
+    <section id="sizerView" class="view hidden sizer-view">
+      <div class="sizer-bg-glow sizer-bg-glow-1"></div>
+      <div class="sizer-bg-glow sizer-bg-glow-2"></div>
+
+      <div class="sizer-shell">
+        <div class="sizer-topbar">
+          <button class="back-btn sizer-back" data-back-menu type="button">
+            <span class="back-icon">←</span>
+            <span>Vissza</span>
+          </button>
+
+          <div class="sizer-topbar-right">
+            <span class="sizer-pill">
+              <span class="pill-dot"></span>
+              Live page resize
+            </span>
+          </div>
+        </div>
+
+        <header class="hero sizer-hero">
+          <div class="hero-copy">
+            <p class="eyebrow">Size tool</p>
+            <h1>Size Tool</h1>
+            <p class="subtitle">
+              Méretezd át az aktuális weboldalt, teszteld gyorsan a reszponzivitást,
+              és nézd meg különböző telefonos nézetekben.
+            </p>
+          </div>
+
+          <div class="sizer-hero-visual" aria-hidden="true">
+            <div class="device-frame">
+              <div class="device-notch"></div>
+              <div class="device-screen">
+                <span></span>
+                <span></span>
+                <span></span>
+                <div></div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <section id="sizerStatus" class="status idle sizer-status" role="status">
+          <span class="status-dot"></span>
+          <span>Nyiss meg egy weboldalt, válassz méretezést, majd alkalmazd.</span>
+        </section>
+
+        <div class="sizer-layout">
+          <section class="sizer-card main-card">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">Preset</p>
+                <h2>Méretezési mód</h2>
+              </div>
+              <span class="section-badge">Text + UI scale</span>
+            </div>
+
+            <p class="hint-text">
+              Válaszd ki, milyen méretet szeretnél alkalmazni az aktuális weboldalon.
+            </p>
+
+            <div class="sizer-presets" role="radiogroup" aria-label="Méretezési mód">
+              <label class="sizer-option">
+                <input type="radio" name="sizePresetRadio" value="compact" />
+                <span class="option-content">
+                  <span class="option-icon">Aa</span>
+                  <span>
+                    <strong>Kompakt</strong>
+                    <small>Sűrűbb UI, kisebb szövegek</small>
+                  </span>
+                </span>
+              </label>
+
+              <label class="sizer-option">
+                <input type="radio" name="sizePresetRadio" value="normal" checked />
+                <span class="option-content">
+                  <span class="option-icon">Aa</span>
+                  <span>
+                    <strong>Normál</strong>
+                    <small>Alap, természetes méretezés</small>
+                  </span>
+                </span>
+              </label>
+
+              <label class="sizer-option">
+                <input type="radio" name="sizePresetRadio" value="large" />
+                <span class="option-content">
+                  <span class="option-icon">Aa</span>
+                  <span>
+                    <strong>Nagyobb</strong>
+                    <small>Kényelmesebb olvasás</small>
+                  </span>
+                </span>
+              </label>
+
+              <label class="sizer-option">
+                <input type="radio" name="sizePresetRadio" value="huge" />
+                <span class="option-content">
+                  <span class="option-icon">Aa</span>
+                  <span>
+                    <strong>Extra nagy</strong>
+                    <small>Maximális láthatóság</small>
+                  </span>
+                </span>
+              </label>
+            </div>
+
+            <select id="sizePreset" class="tool-select sizer-hidden-select" aria-hidden="true" tabindex="-1">
+              <option value="compact">Kompakt</option>
+              <option value="normal" selected>Normál</option>
+              <option value="large">Nagyobb</option>
+              <option value="huge">Extra nagy</option>
+            </select>
+
+            <button id="applySizesBtn" class="primary-btn sizer-apply" type="button">
+              <span>Méretek alkalmazása</span>
+              <span class="btn-arrow">→</span>
+            </button>
+          </section>
+
+          <section class="sizer-card">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">Device preview</p>
+                <h2>Telefon előnézet</h2>
+              </div>
+              <span class="section-badge">Viewport</span>
+            </div>
+
+            <p class="hint-text">
+              Nézd meg, hogyan nézne ki az aktuális weboldal különböző eszközökön.
+            </p>
+
+            <label class="field-label" for="devicePreset">Eszköz kiválasztása</label>
+            <select id="devicePreset" class="tool-select">
+              <option value="iphoneSE">iPhone SE — 375×667</option>
+              <option value="iphone12" selected>iPhone 12 / 13 / 14 — 390×844</option>
+              <option value="iphone14ProMax">iPhone 14 Pro Max — 430×932</option>
+              <option value="pixel7">Google Pixel 7 — 412×915</option>
+              <option value="samsungS21">Samsung Galaxy S21 — 360×800</option>
+              <option value="ipadMini">iPad Mini — 768×1024</option>
+            </select>
+
+            <div class="device-preview-card">
+              <div class="mini-phone">
+                <div class="mini-phone-top"></div>
+                <div class="mini-phone-screen">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+              </div>
+
+              <div>
+                <strong>Gyors mobilteszt</strong>
+                <p>
+                  Hasznos landing page-ek, menük, CTA-k és mobilos töréspontok ellenőrzéséhez.
+                </p>
+              </div>
+            </div>
+
+            <div class="sizer-actions">
+              <button id="applyDeviceBtn" class="primary-btn sizer-apply" type="button">
+                Telefon nézet alkalmazása
+              </button>
+
+              <button id="resetDeviceBtn" class="secondary-btn sizer-reset" type="button">
+                Telefon nézet kikapcsolása
+              </button>
+            </div>
+          </section>
+
+          <section class="sizer-card danger-soft">
+            <div class="section-head">
+              <div>
+                <p class="eyebrow">Reset</p>
+                <h2>Visszaállítás</h2>
+              </div>
+              <span class="section-badge danger-badge">Safe reset</span>
+            </div>
+
+            <p class="hint-text">
+              Ha nem jó az eredmény, ezzel visszaállíthatod az oldal eredeti méreteit.
+            </p>
+
+            <button id="resetSizesBtn" class="secondary-btn sizer-reset" type="button">
+              Eredeti méretek visszaállítása
+            </button>
+          </section>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script type="module" src="popup.js"></script>
+</body>
+
+</html>
